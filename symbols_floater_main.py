@@ -2,6 +2,7 @@
 # -*- coding: utf-8 -*-
 import logging
 
+from clipboard_handler import ClipboardHandler
 from window_handler import WindowHandler as Win
 import pickle
 
@@ -13,8 +14,12 @@ class SymbolsFloater(object):
 		super(SymbolsFloater, self).__init__()
 		self.pages = []
 		self.initializeWindow()
+		self.initializeClipboard()
 		self.loadSymbolsFile()
 		self.main_window.run()
+
+	def initializeClipboard(self):
+		self.clipboard = ClipboardHandler()
 
 	def saveSymbols(self):
 		with open(SAVE_FILENAME, "wb") as f:
@@ -108,10 +113,13 @@ class SymbolsFloater(object):
 			self.pages[self.getCurrentPage()]['symbols'].append(symbol)
 
 		# Add the button
-		self.main_window.addButton(self.HelloWorld, label=symbol, parent=page_grid)
+		self.main_window.addButton(self.copySymbolToClipboard, label=symbol, parent=page_grid, args=(symbol,))
 
 		# Show all elements. It's kinda refreshing.
 		self.main_window_nb.show_all()
+
+	def copySymbolToClipboard(self, widget, symbol):
+		self.clipboard.copy_text(text=symbol)
 
 	def HelloWorld(self, widget):
 		print("Hello, World!")
