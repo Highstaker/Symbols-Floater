@@ -1,8 +1,11 @@
 #!/usr/bin/python3 -u
 # -*- coding: utf-8 -*-
+import logging
 
 from window_handler import WindowHandler as Win
+import pickle
 
+SAVE_FILENAME = "symbols.save"
 
 class SymbolsFloater(object):
 	"""docstring for SymbolsFloater"""
@@ -10,15 +13,36 @@ class SymbolsFloater(object):
 		super(SymbolsFloater, self).__init__()
 		self.pages = []
 		self.initializeWindow()
-
+		self.loadSymbolsFile()
 		self.main_window.run()
+
+	def saveSymbols(self):
+		with open(SAVE_FILENAME, "wb") as f:
+			pickle.dump(self.pages, f, pickle.HIGHEST_PROTOCOL)
+
+	def loadSymbolsFile(self):
+		try:
+			with open(SAVE_FILENAME,'rb') as f:
+				self.pages = pickle.load(f)
+				logging.warning(("self.pages", self.pages))
+				self.restorePages()
+		except FileNotFoundError:
+			logging.warning("Restore file not found!")
+
+	def restorePages(self):
+		for page in self.pages:
+			self.addPage(page['page_name'], mode= "restore")
+			for sym in page['symbols']:
+				self.addSymbolButton(sym, mode="restore")
 
 	def initializeWindow(self):
 		self.main_window = Win()
 		self.main_window.resize(300, 150)
-		box1 = self.main_window.addBox(parent=self.main_window, orientation="vertical")
-		self.main_window.addButton(self.openAddPageDialog, label="Add Page", parent=box1)
-		self.main_window_nb = self.main_window.addNotebook(parent=box1)
+		main_grid = self.main_window.addGrid(parent=self.main_window)
+		self.main_window.addButton(self.openAddPageDialog, label="Add Page", parent=main_grid)
+		self.main_window.addButton(self.openAddSymbolDialog, label="Add Symbols", parent=main_grid)
+		self.main_window_nb = self.main_window.addNotebook()
+		main_grid.attach(self.main_window_nb, 0, 1, 2, 1)
 
 	def getCurrentPage(self):
 		return self.main_window_nb.get_current_page()
@@ -31,6 +55,7 @@ class SymbolsFloater(object):
 					self.addSymbolButton(sym)
 
 				dialog_window.close()
+				self.saveSymbols()
 
 		dialog_window = Win(type="dialog", title="Enter symbols to add")
 		# self.addPage(widget, "test")
@@ -50,6 +75,7 @@ class SymbolsFloater(object):
 			if text:
 				self.addPage(text)
 				dialog_window.close()
+				self.saveSymbols()
 
 		dialog_window = Win(type="dialog", title="Enter name for the new page")
 		# self.addPage(widget, "test")
@@ -63,23 +89,29 @@ class SymbolsFloater(object):
 
 		dialog_window.show_all()
 
-	def addPage(self, page_label):
+	def addPage(self, page_label, mode=None):
 		page_grid = self.main_window.addGrid()
-		self.pages += [(page_grid, [])]
 		self.main_window.addNotebookPage(notebook=self.main_window_nb, page_widget=page_grid, label=page_label)
+
+		if not mode == "restore":
+			self.pages += [dict(page_name=page_label, symbols=list())]
 
 		# Show all elements. It's kinda refreshing.
 		self.main_window_nb.show_all()
 
-	def addSymbolButton(self, symbol):
+	def addSymbolButton(self, symbol, mode=None):
 		# get the grid widget on the current page
-		page_grid = self.pages[self.getCurrentPage()][0]
+		page_grid = self.main_window_nb.get_nth_page(self.getCurrentPage())
 
-		# Add a symbol to list of symbols for a page
-		self.pages[self.getCurrentPage()][1].append(symbol)
+		if not mode == "restore":
+			# Add a symbol to list of symbols for a page
+			self.pages[self.getCurrentPage()]['symbols'].append(symbol)
 
 		# Add the button
 		self.main_window.addButton(self.HelloWorld, label=symbol, parent=page_grid)
+
+		# Show all elements. It's kinda refreshing.
+		self.main_window_nb.show_all()
 
 	def HelloWorld(self, widget):
 		print("Hello, World!")
