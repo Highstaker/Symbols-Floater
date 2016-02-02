@@ -5,15 +5,18 @@ from gi.repository import Gtk
 
 class WindowHandler(Gtk.Window):
 	"""docstring for WindowHandler"""
-	def __init__(self, title="Untitled", type="main"):
+	def __init__(self, title="Untitled", type="main", topmost=False):
 		super(WindowHandler, self).__init__(title=title)
-		self._createWindow(type)
+		self._createWindow(type, topmost=topmost)
 
-	def _createWindow(self, type):
+	def _createWindow(self, type, topmost=False):
 		if type == "main":
 			self.connect("delete-event", Gtk.main_quit)
 		elif type == "dialog":
 			pass
+
+		if topmost:
+			self.set_keep_above(True)
 
 	def addButton(self, action, label="", parent=None, args=tuple(), kwargs=dict()):
 		button = Gtk.Button(label=label)

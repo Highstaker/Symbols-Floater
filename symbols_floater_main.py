@@ -41,7 +41,7 @@ class SymbolsFloater(object):
 				self.addSymbolButton(sym, mode="restore")
 
 	def initializeWindow(self):
-		self.main_window = Win()
+		self.main_window = Win(topmost=True)
 		self.main_window.resize(300, 150)
 		main_grid = self.main_window.addGrid(parent=self.main_window)
 		self.main_window.addButton(self.openAddPageDialog, label="Add Page", parent=main_grid)
