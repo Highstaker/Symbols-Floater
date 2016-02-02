@@ -95,7 +95,7 @@ class SymbolsFloater(object):
 		dialog_window.show_all()
 
 	def addPage(self, page_label, mode=None):
-		page_grid = self.main_window.addGrid()
+		page_grid = self.main_window.addBox(orientation="horizontal", spacing=3)
 		self.main_window.addNotebookPage(notebook=self.main_window_nb, page_widget=page_grid, label=page_label)
 
 		if not mode == "restore":
@@ -113,7 +113,8 @@ class SymbolsFloater(object):
 			self.pages[self.getCurrentPage()]['symbols'].append(symbol)
 
 		# Add the button
-		self.main_window.addButton(self.copySymbolToClipboard, label=symbol, parent=page_grid, args=(symbol,))
+		self.main_window.addButton(self.copySymbolToClipboard, label=symbol,
+								parent=page_grid, args=(symbol,), min_size=(40, 40))
 
 		# Show all elements. It's kinda refreshing.
 		self.main_window_nb.show_all()

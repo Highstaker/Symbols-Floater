@@ -24,8 +24,10 @@ class WindowHandler(Gtk.Window):
 			self.set_resizable(False)
 
 
-	def addButton(self, action, label="", parent=None, args=tuple(), kwargs=dict()):
+	def addButton(self, action, label="", parent=None, args=tuple(), kwargs=dict(), min_size=None):
 		button = Gtk.Button(label=label)
+		if min_size:
+			button.set_size_request(*min_size)
 		button.connect("clicked", action, *args, **kwargs)
 		if parent:
 			parent.add(button)
@@ -39,13 +41,13 @@ class WindowHandler(Gtk.Window):
 
 		return entry
 
-	def addBox(self, parent=None, orientation="horizontal"):
+	def addBox(self, parent=None, orientation="horizontal", spacing=0):
 		if orientation == "vertical":
 			orientation = Gtk.Orientation.VERTICAL
 		else:
 			orientation = Gtk.Orientation.HORIZONTAL
 
-		box = Gtk.Box(orientation=orientation)
+		box = Gtk.Box(orientation=orientation, spacing=spacing)
 		if parent:
 			parent.add(box)
 
