@@ -26,7 +26,9 @@ class WindowHandler(Gtk.Window):
 		else:
 			self.set_resizable(False)
 
-	def addButton(self, action, label="", parent=None, args=tuple(), kwargs=None, min_size=None):
+	def addButton(self, action, label="", parent=None, args=None, kwargs=None, min_size=None):
+		if not args:
+			args = tuple()
 		if not kwargs:
 			kwargs = dict()
 

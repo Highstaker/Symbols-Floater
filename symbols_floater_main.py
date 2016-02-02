@@ -3,6 +3,7 @@
 import logging
 
 from clipboard_handler import ClipboardHandler
+from text_dialog import TextDialog
 from window_handler import WindowHandler as Win
 import pickle
 
@@ -53,8 +54,8 @@ class SymbolsFloater(object):
 		return self.main_window_nb.get_current_page()
 
 	def openAddSymbolDialog(self, widget):
-		def ok_button_handle(widget):
-			text = textview.get_text()
+		def ok_button_handle(widget, get_text_func):
+			text = get_text_func()
 			if text:
 				for sym in text:
 					self.addSymbolButton(sym)
@@ -62,41 +63,19 @@ class SymbolsFloater(object):
 				dialog_window.close()
 				self.saveSymbols()
 
-		dialog_window = Win(type="dialog", title="Enter symbols to add", resizable=False, topmost=True)
-		# Set main window as parent to dialogs. This causes them to be spawned right above the main window.
-		dialog_window.set_transient_for(self.main_window)
-		# self.addPage(widget, "test")
-		grid = dialog_window.addGrid(parent=dialog_window)
-		textview = dialog_window.addEntry()
-		grid.attach(textview, 0, 0, 2, 1)
-		ok_button = dialog_window.addButton(ok_button_handle, "OK")
-		grid.attach(ok_button, 0, 1, 1, 2)
-		cancel_button = dialog_window.addButton(lambda widget: dialog_window.close(), "Cancel")
-		grid.attach(cancel_button, 1, 1, 1, 2)
-
-		dialog_window.show_all()
+		dialog_window = TextDialog(ok_func=ok_button_handle, parent_window=self.main_window,
+								title="Enter symbols to add")
 
 	def openAddPageDialog(self, widget):
-		def ok_button_handle(widget):
-			text = textview.get_text()
+		def ok_button_handle(widget, get_text_func):
+			text = get_text_func()
 			if text:
 				self.addPage(text)
 				dialog_window.close()
 				self.saveSymbols()
 
-		dialog_window = Win(type="dialog", title="Enter name for the new page", resizable=False, topmost=True)
-		# Set main window as parent to dialogs. This causes them to be spawned right above the main window.
-		dialog_window.set_transient_for(self.main_window)
-		# self.addPage(widget, "test")
-		grid = dialog_window.addGrid(parent=dialog_window)
-		textview = dialog_window.addEntry()
-		grid.attach(textview, 0, 0, 2, 1)
-		ok_button = dialog_window.addButton(ok_button_handle, "OK")
-		grid.attach(ok_button, 0, 1, 1, 2)
-		cancel_button = dialog_window.addButton(lambda widget: dialog_window.close(), "Cancel")
-		grid.attach(cancel_button, 1, 1, 1, 2)
-
-		dialog_window.show_all()
+		dialog_window = TextDialog(ok_func=ok_button_handle, parent_window=self.main_window,
+								title="Enter name for the new page")
 
 	def addPage(self, page_label, mode=None):
 		page_grid = self.main_window.addBox(orientation="horizontal", spacing=3)
