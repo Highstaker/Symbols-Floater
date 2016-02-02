@@ -41,13 +41,13 @@ class SymbolsFloater(object):
 				self.addSymbolButton(sym, mode="restore")
 
 	def initializeWindow(self):
-		self.main_window = Win(topmost=True)
-		self.main_window.resize(300, 150)
-		main_grid = self.main_window.addGrid(parent=self.main_window)
-		self.main_window.addButton(self.openAddPageDialog, label="Add Page", parent=main_grid)
-		self.main_window.addButton(self.openAddSymbolDialog, label="Add Symbols", parent=main_grid)
-		self.main_window_nb = self.main_window.addNotebook()
-		main_grid.attach(self.main_window_nb, 0, 1, 2, 1)
+		self.main_window = Win(topmost=True, resizable=False, title="Symbols Floater")
+		# self.main_window.resize(300, 150)
+		main_box = self.main_window.addBox(parent=self.main_window, orientation="vertical")
+		button_row = self.main_window.addBox(parent=main_box, orientation="horizontal")
+		self.main_window.addButton(self.openAddPageDialog, label="Add Page", parent=button_row)
+		self.main_window.addButton(self.openAddSymbolDialog, label="Add Symbols", parent=button_row)
+		self.main_window_nb = self.main_window.addNotebook(parent=main_box)
 
 	def getCurrentPage(self):
 		return self.main_window_nb.get_current_page()
@@ -62,7 +62,7 @@ class SymbolsFloater(object):
 				dialog_window.close()
 				self.saveSymbols()
 
-		dialog_window = Win(type="dialog", title="Enter symbols to add")
+		dialog_window = Win(type="dialog", title="Enter symbols to add", resizable=False)
 		# self.addPage(widget, "test")
 		grid = dialog_window.addGrid(parent=dialog_window)
 		textview = dialog_window.addEntry()
@@ -82,7 +82,7 @@ class SymbolsFloater(object):
 				dialog_window.close()
 				self.saveSymbols()
 
-		dialog_window = Win(type="dialog", title="Enter name for the new page")
+		dialog_window = Win(type="dialog", title="Enter name for the new page", resizable=False)
 		# self.addPage(widget, "test")
 		grid = dialog_window.addGrid(parent=dialog_window)
 		textview = dialog_window.addEntry()
