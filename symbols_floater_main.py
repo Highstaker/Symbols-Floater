@@ -41,7 +41,7 @@ class SymbolsFloater(object):
 				self.addSymbolButton(sym, mode="restore")
 
 	def initializeWindow(self):
-		self.main_window = Win(topmost=True, resizable=False, title="Symbols Floater")
+		self.main_window = Win(topmost=True, resizable=False, title="Symbols Floater" , initial_position="center")
 		# self.main_window.resize(300, 150)
 		main_box = self.main_window.addBox(parent=self.main_window, orientation="vertical")
 		button_row = self.main_window.addBox(parent=main_box, orientation="horizontal")
@@ -62,7 +62,9 @@ class SymbolsFloater(object):
 				dialog_window.close()
 				self.saveSymbols()
 
-		dialog_window = Win(type="dialog", title="Enter symbols to add", resizable=False)
+		dialog_window = Win(type="dialog", title="Enter symbols to add", resizable=False, topmost=True)
+		# Set main window as parent to dialogs. This causes them to be spawned right above the main window.
+		dialog_window.set_transient_for(self.main_window)
 		# self.addPage(widget, "test")
 		grid = dialog_window.addGrid(parent=dialog_window)
 		textview = dialog_window.addEntry()
@@ -82,7 +84,9 @@ class SymbolsFloater(object):
 				dialog_window.close()
 				self.saveSymbols()
 
-		dialog_window = Win(type="dialog", title="Enter name for the new page", resizable=False)
+		dialog_window = Win(type="dialog", title="Enter name for the new page", resizable=False, topmost=True)
+		# Set main window as parent to dialogs. This causes them to be spawned right above the main window.
+		dialog_window.set_transient_for(self.main_window)
 		# self.addPage(widget, "test")
 		grid = dialog_window.addGrid(parent=dialog_window)
 		textview = dialog_window.addEntry()

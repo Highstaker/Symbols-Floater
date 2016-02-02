@@ -5,15 +5,18 @@ from gi.repository import Gtk
 
 class WindowHandler(Gtk.Window):
 	"""docstring for WindowHandler"""
-	def __init__(self, title="Untitled", type="main", topmost=False, resizable=True):
+	def __init__(self, title="Untitled", type="main", topmost=False, resizable=True, initial_position=None):
 		super(WindowHandler, self).__init__(title=title)
-		self._createWindow(type, topmost=topmost, resizable=resizable)
+		self._createWindow(type, topmost=topmost, resizable=resizable, initial_position=initial_position)
 
-	def _createWindow(self, type, topmost=False, resizable=True):
+	def _createWindow(self, type, topmost=False, resizable=True, initial_position=None):
 		if type == "main":
 			self.connect("delete-event", Gtk.main_quit)
 		elif type == "dialog":
 			pass
+
+		if initial_position == "center":
+			self.set_position(Gtk.WindowPosition.CENTER)
 
 		if topmost:
 			self.set_keep_above(True)
@@ -23,8 +26,10 @@ class WindowHandler(Gtk.Window):
 		else:
 			self.set_resizable(False)
 
+	def addButton(self, action, label="", parent=None, args=tuple(), kwargs=None, min_size=None):
+		if not kwargs:
+			kwargs = dict()
 
-	def addButton(self, action, label="", parent=None, args=tuple(), kwargs=dict(), min_size=None):
 		button = Gtk.Button(label=label)
 		if min_size:
 			button.set_size_request(*min_size)
