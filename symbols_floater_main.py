@@ -42,7 +42,8 @@ class SymbolsFloater(object):
 				self.addSymbolButton(sym, mode="restore")
 
 	def initializeWindow(self):
-		self.main_window = Win(topmost=True, resizable=False, title="Symbols Floater" , initial_position="center")
+		self.main_window = Win(topmost=True, resizable=False, title="Symbols Floater",
+							   initial_position="center", focusable=False)
 		# self.main_window.resize(300, 150)
 		main_box = self.main_window.addBox(parent=self.main_window, orientation="vertical")
 		button_row = self.main_window.addBox(parent=main_box, orientation="horizontal")
