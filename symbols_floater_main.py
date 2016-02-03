@@ -1,43 +1,36 @@
 #!/usr/bin/python3 -u
 # -*- coding: utf-8 -*-
 import logging
-
 from clipboard_handler import ClipboardHandler
+from file_saver import FileSaver
+from signal_handlers import SignalHandlers
 from text_dialog import TextDialog
 from window_handler import WindowHandler as Win
-import pickle
-
-SAVE_FILENAME = "symbols.save"
 
 class SymbolsFloater(object):
 	"""docstring for SymbolsFloater"""
 	def __init__(self):
 		super(SymbolsFloater, self).__init__()
 		self.pages = []
+
+		self.signal_handlers = SignalHandlers(self)
+		self.file_saver = FileSaver(self.pages)
+
 		self.initializeWindow()
 		self.initializeClipboard()
-		self.loadSymbolsFile()
+
+		self.file_saver.loadSymbolsFile()
+		self.restorePages()
+
 		self.main_window.run()
 
 	def initializeClipboard(self):
 		self.clipboard = ClipboardHandler()
 
-	def saveSymbols(self):
-		with open(SAVE_FILENAME, "wb") as f:
-			pickle.dump(self.pages, f, pickle.HIGHEST_PROTOCOL)
-
-	def loadSymbolsFile(self):
-		try:
-			with open(SAVE_FILENAME,'rb') as f:
-				self.pages = pickle.load(f)
-				logging.warning(("self.pages", self.pages))
-				self.restorePages()
-		except FileNotFoundError:
-			logging.warning("Restore file not found!")
-
 	def restorePages(self):
-		for page in self.pages:
-			self.addPage(page['page_name'], mode= "restore")
+		print(self.pages)#debug
+		for n, page in enumerate(self.pages):
+			self.addPage(page['page_name'], mode= "restore", page_index=n)
 			for sym in page['symbols']:
 				self.addSymbolButton(sym, mode="restore")
 
@@ -50,6 +43,7 @@ class SymbolsFloater(object):
 		self.main_window.addButton(self.openAddPageDialog, label="Add Page", parent=button_row)
 		self.main_window.addButton(self.openAddSymbolDialog, label="Add Symbols", parent=button_row)
 		self.main_window_nb = self.main_window.addNotebook(parent=main_box)
+		self.main_window_nb.connect("page_reordered", self.signal_handlers.tabReorder)
 
 	def getCurrentPage(self):
 		return self.main_window_nb.get_current_page()
@@ -62,7 +56,7 @@ class SymbolsFloater(object):
 					self.addSymbolButton(sym)
 
 				dialog_window.close()
-				self.saveSymbols()
+				self.file_saver.saveSymbols()
 
 		dialog_window = TextDialog(ok_func=ok_button_handle, parent_window=self.main_window,
 								title="Enter symbols to add")
@@ -73,20 +67,33 @@ class SymbolsFloater(object):
 			if text:
 				self.addPage(text)
 				dialog_window.close()
-				self.saveSymbols()
+				self.file_saver.saveSymbols()
 
 		dialog_window = TextDialog(ok_func=ok_button_handle, parent_window=self.main_window,
 								title="Enter name for the new page")
 
-	def addPage(self, page_label, mode=None):
+	def addPage(self, page_label, mode=None, page_index=None):
+
+		#Remove @@ from page name, because it's in save file syntax
+		page_label = page_label.replace("@@","")
+
 		page_grid = self.main_window.addBox(orientation="horizontal", spacing=3)
 		self.main_window.addNotebookPage(notebook=self.main_window_nb, page_widget=page_grid, label=page_label)
 
-		if not mode == "restore":
-			self.pages += [dict(page_name=page_label, symbols=list())]
+		# Makes a tab draggable, so you could change order of tabs.
+		self.main_window_nb.set_tab_reorderable(page_grid, True)
+
+		if not mode:
+			self.pages += [dict(page_name=page_label, symbols=list(), page_widget=page_grid)]
+		elif mode == "restore":
+			self.pages[page_index]["page_widget"] = page_grid
 
 		# Show all elements. It's kinda refreshing.
 		self.main_window_nb.show_all()
+
+		# Go to the newly created page. -1 means the last page, it is created in the end anyway
+		# Had to put it after show_all() because it won't switch to a page with invisible child widgets
+		self.main_window_nb.set_current_page(-1)
 
 	def addSymbolButton(self, symbol, mode=None):
 		# get the grid widget on the current page
@@ -106,8 +113,9 @@ class SymbolsFloater(object):
 	def copySymbolToClipboard(self, widget, symbol):
 		self.clipboard.copy_text(text=symbol)
 
-	def HelloWorld(self, widget):
+	def HelloWorld(self, *args):
 		print("Hello, World!")
+		print("args:", args)
 
 
 def main():
