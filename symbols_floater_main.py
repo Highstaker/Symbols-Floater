@@ -1,11 +1,15 @@
 #!/usr/bin/python3 -u
 # -*- coding: utf-8 -*-
 import logging
+
+from gi.repository import Gdk
+
 from clipboard_handler import ClipboardHandler
 from file_saver import FileSaver
 from signal_handlers import SignalHandlers
 from text_dialog import TextDialog
 from window_handler import WindowHandler as Win
+
 
 class SymbolsFloater(object):
 	"""docstring for SymbolsFloater"""
@@ -73,12 +77,13 @@ class SymbolsFloater(object):
 								title="Enter name for the new page")
 
 	def addPage(self, page_label, mode=None, page_index=None):
-
 		#Remove @@ from page name, because it's in save file syntax
-		page_label = page_label.replace("@@","")
+		page_label = page_label.replace("@@", "")
 
 		page_grid = self.main_window.addBox(orientation="horizontal", spacing=3)
-		self.main_window.addNotebookPage(notebook=self.main_window_nb, page_widget=page_grid, label=page_label)
+		self.main_window.addNotebookPage(notebook=self.main_window_nb, page_widget=page_grid,
+										label_title=page_label, has_close_button=True,
+										close_func=self.signal_handlers.tabClose)
 
 		# Makes a tab draggable, so you could change order of tabs.
 		self.main_window_nb.set_tab_reorderable(page_grid, True)
@@ -104,8 +109,10 @@ class SymbolsFloater(object):
 			self.pages[self.getCurrentPage()]['symbols'].append(symbol)
 
 		# Add the button
-		self.main_window.addButton(self.copySymbolToClipboard, label=symbol,
+		button = self.main_window.addButton(self.copySymbolToClipboard, label=symbol,
 								parent=page_grid, args=(symbol,), min_size=(40, 40))
+		# Make the button draggable with LMB, and thus - movable.
+		button.drag_source_set(Gdk.ModifierType.BUTTON1_MASK, [], Gdk.DragAction.MOVE)
 
 		# Show all elements. It's kinda refreshing.
 		self.main_window_nb.show_all()

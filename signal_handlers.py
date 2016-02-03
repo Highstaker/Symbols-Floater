@@ -32,3 +32,14 @@ class SignalHandlers(object):
 				print(self.floater.pages)#debug
 				self.floater.file_saver.saveSymbols()
 				break
+
+	def tabClose(self, widget, page_widget):
+		"""
+		Invoked when the tab is being deleted on X button press. Removes the tab and the page from `self.pages`
+		:param widget:
+		:return: None
+		"""
+		print(widget)#debug
+		page_number = self.floater.main_window_nb.page_num(page_widget)
+		print("page_number", page_number)
+		self.floater.main_window_nb.remove_page(page_number)

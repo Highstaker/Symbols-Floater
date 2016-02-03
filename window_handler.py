@@ -80,8 +80,36 @@ class WindowHandler(Gtk.Window):
 
 		return notebook
 
-	def addNotebookPage(self, notebook, page_widget, label=""):
-		notebook.append_page(page_widget, Gtk.Label(label))
+	def addNotebookPage(self, notebook, page_widget, label_title="", has_close_button=False, close_func=lambda: None):
+		if not has_close_button:
+			notebook.append_page(page_widget, Gtk.Label(label_title))
+		else:
+			# a box containing both the label and the close button
+			tab_label_box = self.addBox(orientation="horizontal", spacing=5)
+			label = Gtk.Label(label_title)
+			tab_label_box.add(label)
+
+			# get a stock close button image
+			close_image = Gtk.Image()
+			close_image.set_from_stock(Gtk.STOCK_CLOSE, Gtk.IconSize.MENU)
+
+			# make the close button
+			btn = Gtk.Button()
+			btn.set_relief(Gtk.ReliefStyle.NONE)
+			btn.set_focus_on_click(False)
+			btn.set_image(close_image)
+			print(btn)#debug
+			tab_label_box.add(btn)
+
+			# connect the function that will close the tab and pass the page widget to it.
+			# This is needed to get the page index
+			btn.connect("clicked", close_func, page_widget)
+
+			# have to show it all before appending the page
+			tab_label_box.show_all()
+
+			notebook.append_page(page_widget, tab_label_box)
+
 		return page_widget
 
 	def run(self):
