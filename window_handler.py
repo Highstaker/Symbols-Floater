@@ -3,6 +3,47 @@
 from gi.repository import Gtk
 
 
+class YesNoDialog(Gtk.Dialog):
+	"""Creates a simple Yes/No dialog"""
+	def __init__(self, parent, dialog_title="Untitled Dialog", dialog_text="",
+				yes_func=lambda: None, no_func=lambda: None):
+		"""
+		:param parent: A parent of this dialog
+		:param dialog_title: Title of this dialog
+		:param dialog_text: Text to be put into the dialog window
+		:param yes_func: a function invoked when Yes is pressed
+		:param no_func: a function invoked when No is pressed
+		:return:
+		"""
+		Gtk.Dialog.__init__(self, dialog_title, None, 0,
+			(Gtk.STOCK_NO, Gtk.ResponseType.NO,
+			Gtk.STOCK_YES, Gtk.ResponseType.YES))
+
+		self.yes_func = yes_func
+		self.no_func = no_func
+
+		self.set_default_size(150, 100)
+
+		label = Gtk.Label(dialog_text)
+
+		box = self.get_content_area()
+		box.add(label)
+		self.show_all()
+
+		self.run_dialog()
+
+	def run_dialog(self):
+		response = self.run()
+
+		if response == Gtk.ResponseType.YES:
+			self.yes_func()
+		elif response == Gtk.ResponseType.NO:
+			self.no_func()
+
+		self.destroy()
+
+
+
 class WindowHandler(Gtk.Window):
 	"""docstring for WindowHandler"""
 	def __init__(self, title="Untitled", type="main", topmost=False, resizable=True, initial_position=None, focusable=True):
@@ -98,12 +139,12 @@ class WindowHandler(Gtk.Window):
 			btn.set_relief(Gtk.ReliefStyle.NONE)
 			btn.set_focus_on_click(False)
 			btn.set_image(close_image)
-			print(btn)#debug
-			tab_label_box.add(btn)
 
 			# connect the function that will close the tab and pass the page widget to it.
 			# This is needed to get the page index
 			btn.connect("clicked", close_func, page_widget)
+
+			tab_label_box.add(btn)
 
 			# have to show it all before appending the page
 			tab_label_box.show_all()

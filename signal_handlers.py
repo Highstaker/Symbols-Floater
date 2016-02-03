@@ -1,5 +1,6 @@
 #!/usr/bin/python3 -u
 # -*- coding: utf-8 -*-
+from window_handler import YesNoDialog
 
 
 class SignalHandlers(object):
@@ -39,7 +40,18 @@ class SignalHandlers(object):
 		:param widget:
 		:return: None
 		"""
-		print(widget)#debug
 		page_number = self.floater.main_window_nb.page_num(page_widget)
-		print("page_number", page_number)
-		self.floater.main_window_nb.remove_page(page_number)
+
+		def close_tab():
+			print("The Yes button was clicked")#debug
+			print(widget)#debug
+			print("page_number", page_number)#debug
+			self.floater.main_window_nb.remove_page(page_number)
+			self.floater.pages.pop(page_number)
+			self.floater.file_saver.saveSymbols()
+
+		dialog = YesNoDialog(parent=self.floater, dialog_title="Delete?",
+				dialog_text="Are you sure you want to delete {0}?".format(self.floater.pages[page_number]['page_name']),
+							yes_func=close_tab
+							)
+
