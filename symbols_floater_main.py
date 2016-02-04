@@ -1,9 +1,6 @@
 #!/usr/bin/python3 -u
 # -*- coding: utf-8 -*-
-import logging
-
 from gi.repository import Gdk
-
 from clipboard_handler import ClipboardHandler
 from file_saver import FileSaver
 from signal_handlers import SignalHandlers
@@ -68,8 +65,8 @@ class SymbolsFloater(object):
 		else:
 			error_message = "Cannot create symbols without any pages!"
 			small_message = "Please, create a page first!"
-			dialog_window = ErrorMessageDialog(message=error_message, secondary_message=small_message,
-											   title="Error!")
+			dialog_window = ErrorMessageDialog(dialog_text=error_message, dialog_text_secondary=small_message,
+											   dialog_title="Error!", parent=self.main_window)
 
 	def openAddPageDialog(self, widget):
 		def ok_button_handle(widget, get_text_func):

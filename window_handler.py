@@ -3,9 +3,9 @@
 from gi.repository import Gtk
 
 
-class YesNoDialog(Gtk.Dialog):
+class YesNoDialog(Gtk.MessageDialog):
 	"""Creates a simple Yes/No dialog"""
-	def __init__(self, parent, dialog_title="Untitled Dialog", dialog_text="",
+	def __init__(self, parent=None, dialog_title="Untitled Dialog", dialog_text="",
 				yes_func=lambda: None, no_func=lambda: None):
 		"""
 		:param parent: A parent of this dialog
@@ -15,20 +15,13 @@ class YesNoDialog(Gtk.Dialog):
 		:param no_func: a function invoked when No is pressed
 		:return:
 		"""
-		Gtk.Dialog.__init__(self, dialog_title, None, 0,
-			(Gtk.STOCK_NO, Gtk.ResponseType.NO,
-			Gtk.STOCK_YES, Gtk.ResponseType.YES))
+		super(YesNoDialog, self).__init__(parent, 0, Gtk.MessageType.QUESTION,
+        Gtk.ButtonsType.YES_NO, dialog_text)
+
+		self.set_title(dialog_title)
 
 		self.yes_func = yes_func
 		self.no_func = no_func
-
-		self.set_default_size(150, 100)
-
-		label = Gtk.Label(dialog_text)
-
-		box = self.get_content_area()
-		box.add(label)
-		self.show_all()
 
 		self.run_dialog()
 
@@ -42,19 +35,21 @@ class YesNoDialog(Gtk.Dialog):
 
 		self.destroy()
 
+
 class ErrorMessageDialog(Gtk.MessageDialog):
 	"""docstring for ErrorMessageDialog"""
-	def __init__(self, message="", secondary_message="", title="Untitled Error Dialog", parent=None):
+	def __init__(self, dialog_text="", dialog_text_secondary="", dialog_title="Untitled Error Dialog", parent=None):
 		super(ErrorMessageDialog, self).__init__(parent, 0, Gtk.MessageType.ERROR,
-			Gtk.ButtonsType.OK, message)
+			Gtk.ButtonsType.OK, dialog_text)
 
-		self.set_title(title)
-		self.format_secondary_text(secondary_message)
+		self.set_title(dialog_title)
+		self.format_secondary_text(dialog_text_secondary)
 		self.run_dialog()
 
 	def run_dialog(self):
 		self.run()
 		self.destroy()
+
 
 class WindowHandler(Gtk.Window):
 	"""docstring for WindowHandler"""
