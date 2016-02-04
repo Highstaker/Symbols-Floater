@@ -1,6 +1,6 @@
 #!/usr/bin/python3 -u
 # -*- coding: utf-8 -*-
-from gi.repository import Gtk
+from gi.repository import Gtk, Gdk
 
 
 class YesNoDialog(Gtk.MessageDialog):
@@ -128,14 +128,28 @@ class WindowHandler(Gtk.Window):
 
 		return notebook
 
-	def addNotebookPage(self, notebook, page_widget, label_title="", has_close_button=False, close_func=lambda: None):
+	def addNotebookPage(self, notebook, page_widget, label_title="",
+						has_close_button=False, close_func=lambda: None,
+						tab_double_click_func=lambda *args: None,
+						tab_double_click_func_args = tuple()
+						):
 		if not has_close_button:
 			notebook.append_page(page_widget, Gtk.Label(label_title))
 		else:
+			def handleButtonPressEvent(widget, event):
+				if event.button == Gdk.BUTTON_PRIMARY:
+					if event.type == Gdk.EventType._2BUTTON_PRESS:
+						tab_double_click_func(widget, *tab_double_click_func_args)
+
 			# a box containing both the label and the close button
 			tab_label_box = self.addBox(orientation="horizontal", spacing=5)
+
+			e = Gtk.EventBox()
 			label = Gtk.Label(label_title)
-			tab_label_box.add(label)
+			e.add(label)
+			e.add_events(Gdk.EventMask.BUTTON_PRESS_MASK)
+			e.connect("button-press-event", handleButtonPressEvent)
+			tab_label_box.add(e)
 
 			# get a stock close button image
 			close_image = Gtk.Image()
@@ -158,7 +172,7 @@ class WindowHandler(Gtk.Window):
 
 			notebook.append_page(page_widget, tab_label_box)
 
-		return page_widget
+		return page_widget, label
 
 	def run(self):
 		self.show_all()

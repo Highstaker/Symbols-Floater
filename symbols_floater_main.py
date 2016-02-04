@@ -79,22 +79,42 @@ class SymbolsFloater(object):
 		dialog_window = TextDialog(ok_func=ok_button_handle, parent_window=self.main_window,
 								title="Enter name for the new page")
 
+	def renamePage(self, page_num, new_name):
+		self.pages[page_num]['page_name'] = new_name
+		self.pages[page_num]['label_widget'].set_text(new_name)
+
+	def openRenameDialog(self, widget, page_widget):
+		def ok_button_handle(widget, get_text_func):
+			text = get_text_func()
+			if text:
+				print(page_widget)
+				self.renamePage(page_num=self.main_window_nb.page_num(page_widget), new_name=text)
+				dialog_window.close()
+				self.file_saver.saveSymbols()
+
+		dialog_window = TextDialog(ok_func=ok_button_handle, parent_window=self.main_window,
+								title="Enter new name for this page")
+
 	def addPage(self, page_label, mode=None, page_index=None):
 		#Remove @@ from page name, because it's in save file syntax
 		page_label = page_label.replace("@@", "")
 
 		page_grid = self.main_window.addBox(orientation="horizontal", spacing=3)
-		self.main_window.addNotebookPage(notebook=self.main_window_nb, page_widget=page_grid,
+		page_widget, label_widget = self.main_window.addNotebookPage(notebook=self.main_window_nb, page_widget=page_grid,
 										label_title=page_label, has_close_button=True,
-										close_func=self.signal_handlers.tabClose)
+										close_func=self.signal_handlers.tabClose,
+										 tab_double_click_func=self.openRenameDialog,
+										tab_double_click_func_args=(page_grid,)
+										 )
 
 		# Makes a tab draggable, so you could change order of tabs.
 		self.main_window_nb.set_tab_reorderable(page_grid, True)
 
 		if not mode:
-			self.pages += [dict(page_name=page_label, symbols=list(), page_widget=page_grid)]
+			self.pages += [dict(page_name=page_label, symbols=list(), page_widget=page_grid, label_widget=label_widget)]
 		elif mode == "restore":
 			self.pages[page_index]["page_widget"] = page_grid
+			self.pages[page_index]["label_widget"] = label_widget
 
 		# Show all elements. It's kinda refreshing.
 		self.main_window_nb.show_all()
