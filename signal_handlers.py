@@ -54,4 +54,3 @@ class SignalHandlers(object):
 				dialog_text="Are you sure you want to delete {0}?".format(self.floater.pages[page_number]['page_name']),
 							yes_func=close_tab
 							)
-

@@ -42,7 +42,19 @@ class YesNoDialog(Gtk.Dialog):
 
 		self.destroy()
 
+class ErrorMessageDialog(Gtk.MessageDialog):
+	"""docstring for ErrorMessageDialog"""
+	def __init__(self, message="", secondary_message="", title="Untitled Error Dialog", parent=None):
+		super(ErrorMessageDialog, self).__init__(parent, 0, Gtk.MessageType.ERROR,
+			Gtk.ButtonsType.OK, message)
 
+		self.set_title(title)
+		self.format_secondary_text(secondary_message)
+		self.run_dialog()
+
+	def run_dialog(self):
+		self.run()
+		self.destroy()
 
 class WindowHandler(Gtk.Window):
 	"""docstring for WindowHandler"""

@@ -8,7 +8,7 @@ from clipboard_handler import ClipboardHandler
 from file_saver import FileSaver
 from signal_handlers import SignalHandlers
 from text_dialog import TextDialog
-from window_handler import WindowHandler as Win
+from window_handler import WindowHandler as Win, ErrorMessageDialog
 
 
 class SymbolsFloater(object):
@@ -62,8 +62,14 @@ class SymbolsFloater(object):
 				dialog_window.close()
 				self.file_saver.saveSymbols()
 
-		dialog_window = TextDialog(ok_func=ok_button_handle, parent_window=self.main_window,
+		if self.main_window_nb.get_n_pages():
+			dialog_window = TextDialog(ok_func=ok_button_handle, parent_window=self.main_window,
 								title="Enter symbols to add")
+		else:
+			error_message = "Cannot create symbols without any pages!"
+			small_message = "Please, create a page first!"
+			dialog_window = ErrorMessageDialog(message=error_message, secondary_message=small_message,
+											   title="Error!")
 
 	def openAddPageDialog(self, widget):
 		def ok_button_handle(widget, get_text_func):
