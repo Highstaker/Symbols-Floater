@@ -4,6 +4,7 @@ import logging
 
 SAVE_FILENAME = "symbols.save"
 
+
 class FileSaver(object):
 	"""A class that handles saving of the symbols to file."""
 
@@ -40,4 +41,5 @@ class FileSaver(object):
 					self.pages += [dict(page_name=page_name, symbols=list(symbols.replace("\n", "")))]
 				logging.warning(("self.pages", self.pages))
 		except FileNotFoundError:
+			# There is no restore file. Start with empty window
 			logging.warning("Restore file not found!")
