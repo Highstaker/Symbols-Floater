@@ -27,7 +27,6 @@ class TextDialog(WindowHandler):
 		ok_button = self.addButton(ok_func, label="OK", parent=buttons_row, args=(lambda: textview.get_text(),))
 		cancel_button = self.addButton(lambda widget: self.close(), label="Cancel", parent=buttons_row)
 
-
 		# Set signals to close the dialog when OK or Cancel is pressed
 		# Nothing should happen if OK is pressed and there is nothing in text input.
 		def ok_destructor():
@@ -35,6 +34,14 @@ class TextDialog(WindowHandler):
 				self.close()
 		ok_button.connect("clicked", lambda *args: ok_destructor())
 		cancel_button.connect("clicked", lambda *args: self.close())
+
+		# This allows to press enter to confirm instead of pressing OK
+		# Make the OK button be able to become the default widget
+		ok_button.set_can_default(True)
+		# Actually make the OK button the default widget
+		self.set_default(ok_button)
+		# Make the press of Enter in text view activate the default widget
+		textview.set_property("activates-default", True)
 
 		#Show everything
 		self.show_all()

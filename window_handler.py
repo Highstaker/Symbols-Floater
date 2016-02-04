@@ -134,7 +134,8 @@ class WindowHandler(Gtk.Window):
 						tab_double_click_func_args = tuple()
 						):
 		if not has_close_button:
-			notebook.append_page(page_widget, Gtk.Label(label_title))
+			label = Gtk.Label(label_title)
+			notebook.append_page(page_widget, label)
 		else:
 			def handleButtonPressEvent(widget, event):
 				if event.button == Gdk.BUTTON_PRIMARY:
