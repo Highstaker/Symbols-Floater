@@ -55,8 +55,6 @@ class SymbolsFloater(object):
 			if text:
 				for sym in text:
 					self.addSymbolButton(sym)
-
-				dialog_window.close()
 				self.file_saver.saveSymbols()
 
 		if self.main_window_nb.get_n_pages():
@@ -73,7 +71,6 @@ class SymbolsFloater(object):
 			text = get_text_func()
 			if text:
 				self.addPage(text)
-				dialog_window.close()
 				self.file_saver.saveSymbols()
 
 		dialog_window = TextDialog(ok_func=ok_button_handle, parent_window=self.main_window,
@@ -89,7 +86,6 @@ class SymbolsFloater(object):
 			if text:
 				print(page_widget)
 				self.renamePage(page_num=self.main_window_nb.page_num(page_widget), new_name=text)
-				dialog_window.close()
 				self.file_saver.saveSymbols()
 
 		dialog_window = TextDialog(ok_func=ok_button_handle, parent_window=self.main_window,
