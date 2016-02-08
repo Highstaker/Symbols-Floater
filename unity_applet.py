@@ -3,7 +3,6 @@
 from os import path
 from gi.repository import AppIndicator3 as appindicator
 from gi.repository import Gtk
-
 from symbols_floater_window import SymbolsFloater
 
 SCRIPT_DIRECTORY = path.dirname(path.realpath(__file__))
@@ -24,6 +23,7 @@ class FloaterApplet:
 
 		self.floaterWindow = SymbolsFloater()
 
+		# Opens the Floater when you scroll mouse wheel over the applet icon
 		self.ind.connect("scroll-event", self._showWindow)
 
 	def _showWindow(self, *args):

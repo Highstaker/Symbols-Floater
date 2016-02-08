@@ -1,8 +1,10 @@
 #!/usr/bin/python3 -u
 # -*- coding: utf-8 -*-
 import logging
+from os import path
 
-SAVE_FILENAME = "symbols.save"
+SCRIPT_DIRECTORY = path.dirname(path.realpath(__file__))
+SAVE_FILENAME = path.join(SCRIPT_DIRECTORY, "symbols.save")
 
 
 class FileSaver(object):

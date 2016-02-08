@@ -16,7 +16,7 @@ class YesNoDialog(Gtk.MessageDialog):
 		:return:
 		"""
 		super(YesNoDialog, self).__init__(parent, 0, Gtk.MessageType.QUESTION,
-        Gtk.ButtonsType.YES_NO, dialog_text)
+		Gtk.ButtonsType.YES_NO, dialog_text)
 
 		self.set_title(dialog_title)
 
@@ -102,7 +102,7 @@ class WindowHandler(Gtk.Window):
 		:param label: text on the button
 		:param parent: parent widget
 		:param args: arguments for `action`
-		:param kwargs: keywod arguments for `action`
+		:param kwargs: keyword arguments for `action`
 		:param min_size: the tuple (width,height) showing the minimum size for the button.
 		:return:
 		"""
@@ -179,7 +179,7 @@ class WindowHandler(Gtk.Window):
 	def addNotebookPage(self, notebook, page_widget, label_title="",
 						has_close_button=False, close_func=lambda: None,
 						tab_double_click_func=lambda *args: None,
-						tab_double_click_func_args = tuple()
+						tab_double_click_func_args=tuple()
 						):
 		"""
 		Adds a notebook page
