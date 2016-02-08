@@ -13,7 +13,7 @@ class TextDialog(WindowHandler):
 		:param title: Title of dialog window
 		:return:
 		"""
-		super(TextDialog, self).__init__(title=title, type="dialog")
+		super(TextDialog, self).__init__(title=title)
 
 		# Set parent
 		self.set_transient_for(parent_window)
@@ -43,5 +43,5 @@ class TextDialog(WindowHandler):
 		# Make the press of Enter in text view activate the default widget
 		textview.set_property("activates-default", True)
 
-		#Show everything
+		# Show everything
 		self.show_all()
